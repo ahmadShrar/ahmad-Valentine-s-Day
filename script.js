@@ -1,7 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-/* Resize */
 function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -9,7 +8,6 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-/* معادلة القلب */
 function heart(t) {
   return {
     x: 16 * Math.pow(Math.sin(t), 3),
@@ -20,7 +18,6 @@ function heart(t) {
   };
 }
 
-/* نقاط القلب + نبض */
 let heartPoints = [];
 let pulse = 0;
 
@@ -38,7 +35,6 @@ function generateHeart() {
   }
 }
 
-/* Particle */
 class Particle {
   constructor() {
     this.reset();
@@ -56,7 +52,6 @@ class Particle {
     if (!this.target) {
       this.target = heartPoints[Math.floor(Math.random() * heartPoints.length)];
     }
-
     this.x += (this.target.x - this.x) * force;
     this.y += (this.target.y - this.y) * force;
     this.y -= 0.08;
@@ -74,7 +69,7 @@ class Particle {
 }
 
 let particles = [];
-let formationProgress = 0; // 0 → 1
+let formationProgress = 0;
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,23 +77,18 @@ function animate() {
   pulse += 0.02;
   generateHeart();
 
-  // تقدم التكوين
   if (formationProgress < 1) {
     formationProgress += 0.002;
   }
 
   const isMobile = window.innerWidth < 600;
-
-  // عدد الدوائر يتكثف مع التكوين
   const baseCount = isMobile ? 280 : 520;
   const maxCount  = isMobile ? 520 : 900;
+
   const targetCount =
     baseCount + (maxCount - baseCount) * formationProgress;
 
-  // قوة الانجذاب
   const attractionForce = 0.01 + formationProgress * 0.02;
-
-  // توهج إضافي عند الاكتمال
   const glowStrength = formationProgress;
 
   while (particles.length < targetCount) {
@@ -114,3 +104,31 @@ function animate() {
 }
 
 animate();
+
+
+const miniContainer = document.querySelector(".mini-hearts");
+
+function createMiniHeart() {
+  const heart = document.createElement("div");
+  heart.className = "mini-heart";
+  heart.innerText = "❤";
+
+  heart.style.left = Math.random() * 100 + "%";
+  heart.style.top  = Math.random() * 100 + "%";
+
+
+  const size = 10 + Math.random() * 12;
+  heart.style.fontSize = size + "px";
+
+  heart.style.animationDuration = 3 + Math.random() * 3 + "s";
+  heart.style.animationDelay = Math.random() * 2 + "s";
+
+  miniContainer.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 7000);
+}
+setTimeout(() => {
+  setInterval(createMiniHeart, 500);
+}, 6500);
